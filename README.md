@@ -19,10 +19,20 @@ Test new fmod function.
 | extreme         | 12.06                     | 13150.41       | 584.27      | 22.96               |
 
 
+
+| Test type (AMD A8)| dummy (spb)               | libm (spb)     | new (spb)   | ratio libm/new      |
+| --------------- | ------------------------- | -------------- | ----------- | ------------------- |
+| main            | 10.618  | 1389.659 | 199.114 | 7.32  |
+| 2 \*pi wrap     | 12.17   | 25.326   | 20.727  | 1.54  |
+| fractional part | 12.109  | 58.972   | 28.962  | 2.78  |
+| extreme         | 112.199 | 8346.179 | 732.643 | 13.27 |
+
+
 Performance comparison table
 System GNU gcc 10 from Ubuntu 20.04 64bit:
 * **i5**: Intel(R) Core(TM) i5-6300HQ
 * **PI4** : Raspberry PI 4 4GB
+* **AMD A8** : AMD A8-5600K
 
 Calculation functions:
 * **dummy**: dummy function call for loop time itself
