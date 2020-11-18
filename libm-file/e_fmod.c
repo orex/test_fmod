@@ -177,18 +177,19 @@ __ieee754_fmod (double x, double y)
     if( hx == 0 )
         return sx.value;
 
-    while( n != 0 ) {
-        if( n > hyltzeroes ) {
+    if( n == 0 )
+      return make_double(sx, hx, iy);
+
+    /* hx in next code can become 0, because hx < hy, hy % 2 == 1 hx * 2^i % hy != 0 */
+
+    while( n > hyltzeroes ) {
             n -=  hyltzeroes;
             hx <<= hyltzeroes;
-        } else {
-            hx <<= n;
-            n = 0;
-        }
         hx %= hy;
-        if( hx == 0 )
-          return sx.value;
     }
+
+    hx <<= n;
+    hx %= hy;
 
     return make_double(sx, hx, iy);
 }
