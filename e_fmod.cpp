@@ -82,6 +82,9 @@ do {								\
 } while (0)
 #endif
 
+#define __glibc_unlikely(cond)	__builtin_expect ((cond), 0)
+#define __glibc_likely(cond)	__builtin_expect ((cond), 1)
+
 static const double one = 1.0;
 
 #define SIGN_POS_MASK UINT64_C(0x8000000000000000)
@@ -100,9 +103,12 @@ double make_double(ieee_double_shape_type sx, uint64_t num, int32_t ep) {
     num <<= lz;
     ep -= lz;
 
-    if (__builtin_expect(ep >= 0, 1)) {
+  if (__glibc_likely(ep >= 0))
+    {
         num = ((num - LAST_EXP_BIT) | ((uint64_t) (ep + 1) << 52));
-    } else {
+    }
+  else
+    {
         num >>= -ep;
     }
     sx.word += num;
@@ -111,7 +117,6 @@ double make_double(ieee_double_shape_type sx, uint64_t num, int32_t ep) {
     return sx.value;
 }
 
-
 double
 my_fmod (double x, double y)
 {
@@ -119,38 +124,41 @@ my_fmod (double x, double y)
 	uint64_t hx, hy, d;
     ieee_double_shape_type sx;
 
-	EXTRACT_WORDS64(hx, x);
-	EXTRACT_WORDS64(hy, y);
-	sx.word = hx & SIGN_POS_MASK;	/* sign of x */
-	hx ^= sx.word;			/* |x| */
-	hy &= SIGN_NEG_MASK;	/* |y| */
+  EXTRACT_WORDS64 (hx, x);
+  EXTRACT_WORDS64 (hy, y);
+  sx.word = hx & SIGN_POS_MASK;    /* sign of x */
+  hx ^= sx.word;            /* |x| */
+  hy &= SIGN_NEG_MASK;    /* |y| */
 
     /* purge off exception values */
-	if(__builtin_expect(hy==0
+  if (__glibc_unlikely (hy == 0
 			    || hx >= DOUBLE_INF_NAN
-			    || hy > DOUBLE_INF_NAN, 0))
+                        || hy > DOUBLE_INF_NAN))
 	  /* y=0,or x not finite or y is NaN */
-	    return (x*y)/(x*y);
-	if(__builtin_expect(hx<=hy, 0)) {
-	    if(hx<hy) return x;	/* |x|<|y| return x */
-	    return sx.value;	/* |x|=|y| return x*0*/
+    return (x * y) / (x * y);
+  if (__glibc_likely(hx <= hy))
+    {
+      if (hx < hy) return x;    /* |x|<|y| return x */
+      return sx.value;    /* |x|=|y| return x*0*/
 	}
 	
     ix = hx >> 52;
     iy = hy >> 52;
 
     /* Most common case where |y| > 1e-292 and |x/y|<2000 */
-    if( __builtin_expect(ix >= 53 && ix - iy <= 11, 1) ) {
+  if (__glibc_likely(ix >= 53 && ix - iy <= 11))
+    {
         SET_NORMAL_VALUE(hx);
         SET_NORMAL_VALUE(hy);
         d = (ix == iy) ? (hx - hy) : (hx << (ix - iy)) % hy;
-        if( d == 0 )
+      if (d == 0)
             return sx.value;
-        return make_double(sx, d, iy - 1); /* iy - 1 because of "zero power" for number with power 1 */
+      return make_double (sx, d, iy - 1); /* iy - 1 because of "zero power" for number with power 1 */
     }
 
     /* Both subnormal special case. */ 
-    if( __builtin_expect(ix == 0 && iy == 0, 0) ) {
+  if (__glibc_unlikely (ix == 0 && iy == 0))
+    {
         uint64_t d = hx % hy;
         sx.word += d;
         sx.value *= one;  /* Optimized out? need for math signals */
@@ -160,11 +168,14 @@ my_fmod (double x, double y)
     /* Assume that hx is not subnormal by conditions above. */
     SET_NORMAL_VALUE(hx);
     ix--;
-    if( __builtin_expect(iy > 0, 1)  ) {
+  if (__builtin_expect (iy > 0, 1))
+    {
       SET_NORMAL_VALUE(hy);
       lzhy = 11;
       iy--;
-    } else {
+    }
+  else
+    {
       lzhy = CLZ(hy);
     }
 
@@ -174,35 +185,42 @@ my_fmod (double x, double y)
     n = ix - iy;
 
     /* Shift hy right until the end or n = 0 */
-    if( n > tzhy ) {
+  if (n > tzhy)
+    {
       hy >>= tzhy;
       n -= tzhy;
       iy += tzhy;
-    } else {
+    }
+  else
+    {
       hy >>= n;
       iy += n;
       n = 0;
    }
 
     /* Shift hx left until the end or n = 0 */
-    if( n > 11 ) {
+  if (n > 11)
+    {
         hx <<= 11;
         n -= 11;
-    } else {
+    }
+  else
+    {
         hx <<= n;
         n = 0;
     }
     hx %= hy;
-    if( hx == 0 )
+  if (hx == 0)
       return sx.value;
 
-    if( n == 0 )
-      return make_double(sx, hx, iy);
+  if (n == 0)
+    return make_double (sx, hx, iy);
 
     /* hx in next code can become 0, because hx < hy, hy % 2 == 1 hx * 2^i % hy != 0 */
 
-    while( n > hyltzeroes ) {
-       n -=  hyltzeroes;
+  while (n > hyltzeroes)
+    {
+      n -= hyltzeroes;
        hx <<= hyltzeroes;
        hx %= hy;
     }
@@ -210,5 +228,5 @@ my_fmod (double x, double y)
     hx <<= n;
     hx %= hy;
 
-    return make_double(sx, hx, iy);
+  return make_double (sx, hx, iy);
 }

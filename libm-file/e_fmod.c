@@ -75,122 +75,138 @@ static const double one = 1.0;
 
 /* Convert back to double */
 inline
-double make_double(ieee_double_shape_type sx, uint64_t num, int32_t ep) {
-    int32_t lz;
-    lz = CLZ(num) - 11;
-    num <<= lz;
-    ep -= lz;
+double make_double (ieee_double_shape_type sx, uint64_t num, int32_t ep)
+{
+  int32_t lz;
+  lz = CLZ(num) - 11;
+  num <<= lz;
+  ep -= lz;
 
-    if (__builtin_expect(ep >= 0, 1)) {
-        num = ((num - LAST_EXP_BIT) | ((uint64_t) (ep + 1) << 52));
-    } else {
-        num >>= -ep;
+  if (__glibc_likely(ep >= 0))
+    {
+      num = ((num - LAST_EXP_BIT) | ((uint64_t) (ep + 1) << 52));
     }
-    sx.word += num;
+  else
+    {
+      num >>= -ep;
+    }
+  sx.word += num;
 
-    sx.value *= one;  /* Optimized out? May be math_check_force_underflow? */
-    return sx.value;
+  sx.value *= one;  /* Optimized out? May be math_check_force_underflow? */
+  return sx.value;
 }
-
 
 double
 __ieee754_fmod (double x, double y)
 {
-	int32_t n, ix, iy, lzhy, tzhy, hyltzeroes;
-	uint64_t hx, hy, d;
-    ieee_double_shape_type sx;
+  int32_t n, ix, iy, lzhy, tzhy, hyltzeroes;
+  uint64_t hx, hy, d;
+  ieee_double_shape_type sx;
 
-	EXTRACT_WORDS64(hx, x);
-	EXTRACT_WORDS64(hy, y);
-	sx.word = hx & SIGN_POS_MASK;	/* sign of x */
-	hx ^= sx.word;			/* |x| */
-	hy &= SIGN_NEG_MASK;	/* |y| */
+  EXTRACT_WORDS64 (hx, x);
+  EXTRACT_WORDS64 (hy, y);
+  sx.word = hx & SIGN_POS_MASK;    /* sign of x */
+  hx ^= sx.word;            /* |x| */
+  hy &= SIGN_NEG_MASK;    /* |y| */
 
-    /* purge off exception values */
-	if(__builtin_expect(hy==0
-			    || hx >= DOUBLE_INF_NAN
-			    || hy > DOUBLE_INF_NAN, 0))
-	  /* y=0,or x not finite or y is NaN */
-	    return (x*y)/(x*y);
-	if(__builtin_expect(hx<=hy, 0)) {
-	    if(hx<hy) return x;	/* |x|<|y| return x */
-	    return sx.value;	/* |x|=|y| return x*0*/
-	}
-	
-    ix = hx >> 52;
-    iy = hy >> 52;
-
-    /* Most common case where |y| > 1e-292 and |x/y|<2000 */
-    if( __builtin_expect(ix >= 53 && ix - iy <= 11, 1) ) {
-        SET_NORMAL_VALUE(hx);
-        SET_NORMAL_VALUE(hy);
-        d = (ix == iy) ? (hx - hy) : (hx << (ix - iy)) % hy;
-        if( d == 0 )
-            return sx.value;
-        return make_double(sx, d, iy - 1); /* iy - 1 because of "zero power" for number with power 1 */
+  /* purge off exception values */
+  if (__glibc_unlikely (hy == 0
+                        || hx >= DOUBLE_INF_NAN
+                        || hy > DOUBLE_INF_NAN))
+    /* y=0,or x not finite or y is NaN */
+    return (x * y) / (x * y);
+  if (__glibc_likely(hx <= hy))
+    {
+      if (hx < hy) return x;    /* |x|<|y| return x */
+      return sx.value;    /* |x|=|y| return x*0*/
     }
 
-    /* Both subnormal special case. */ 
-    if( __builtin_expect(ix == 0 && iy == 0, 0) ) {
-        uint64_t d = hx % hy;
-        sx.word += d;
-        sx.value *= one;  /* Optimized out? need for math signals */
+  ix = hx >> 52;
+  iy = hy >> 52;
+
+  /* Most common case where |y| > 1e-292 and |x/y|<2000 */
+  if (__glibc_likely(ix >= 53 && ix - iy <= 11))
+    {
+      SET_NORMAL_VALUE(hx);
+      SET_NORMAL_VALUE(hy);
+      d = (ix == iy) ? (hx - hy) : (hx << (ix - iy)) % hy;
+      if (d == 0)
         return sx.value;
+      return make_double (sx, d, iy - 1); /* iy - 1 because of "zero power" for number with power 1 */
     }
 
-    /* Assume that hx is not subnormal by conditions above. */
-    SET_NORMAL_VALUE(hx);
-    ix--;
-    if( __builtin_expect(iy > 0, 1)  ) {
-        SET_NORMAL_VALUE(hy);
-        lzhy = 11;
-        iy--;
-    } else {
-        lzhy = CLZ(hy);
+  /* Both subnormal special case. */
+  if (__glibc_unlikely (ix == 0 && iy == 0))
+    {
+      uint64_t d = hx % hy;
+      sx.word += d;
+      sx.value *= one;  /* Optimized out? need for math signals */
+      return sx.value;
     }
 
-    /* Assume hy != 0 */
-    tzhy = CTZ(hy);
-    hyltzeroes = lzhy + tzhy;
-    n = ix - iy;
-
-    /* Shift hy right until the end or n = 0 */
-    if( n > tzhy ) {
-        hy >>= tzhy;
-        n -= tzhy;
-        iy += tzhy;
-    } else {
-        hy >>= n;
-        iy += n;
-        n = 0;
-   }
-
-    /* Shift hx left until the end or n = 0 */
-    if( n > 11 ) {
-        hx <<= 11;
-        n -= 11;
-    } else {
-        hx <<= n;
-        n = 0;
+  /* Assume that hx is not subnormal by conditions above. */
+  SET_NORMAL_VALUE(hx);
+  ix--;
+  if (__builtin_expect (iy > 0, 1))
+    {
+      SET_NORMAL_VALUE(hy);
+      lzhy = 11;
+      iy--;
     }
-    hx %= hy;
-    if( hx == 0 )
-        return sx.value;
-
-    if( n == 0 )
-      return make_double(sx, hx, iy);
-
-    /* hx in next code can become 0, because hx < hy, hy % 2 == 1 hx * 2^i % hy != 0 */
-
-    while( n > hyltzeroes ) {
-            n -=  hyltzeroes;
-            hx <<= hyltzeroes;
-        hx %= hy;
+  else
+    {
+      lzhy = CLZ(hy);
     }
 
-    hx <<= n;
-    hx %= hy;
+  /* Assume hy != 0 */
+  tzhy = CTZ(hy);
+  hyltzeroes = lzhy + tzhy;
+  n = ix - iy;
 
-    return make_double(sx, hx, iy);
+  /* Shift hy right until the end or n = 0 */
+  if (n > tzhy)
+    {
+      hy >>= tzhy;
+      n -= tzhy;
+      iy += tzhy;
+    }
+  else
+    {
+      hy >>= n;
+      iy += n;
+      n = 0;
+    }
+
+  /* Shift hx left until the end or n = 0 */
+  if (n > 11)
+    {
+      hx <<= 11;
+      n -= 11;
+    }
+  else
+    {
+      hx <<= n;
+      n = 0;
+    }
+  hx %= hy;
+  if (hx == 0)
+    return sx.value;
+
+  if (n == 0)
+    return make_double (sx, hx, iy);
+
+  /* hx in next code can become 0, because hx < hy, hy % 2 == 1 hx * 2^i % hy != 0 */
+
+  while (n > hyltzeroes)
+    {
+      n -= hyltzeroes;
+      hx <<= hyltzeroes;
+      hx %= hy;
+    }
+
+  hx <<= n;
+  hx %= hy;
+
+  return make_double (sx, hx, iy);
 }
 libm_alias_finite (__ieee754_fmod, __fmod)

@@ -38,7 +38,7 @@ public:
         std::size_t hash_input  = UINT64_C(0x4bA6C5A2EA5458A1);
         std::uint64_t total_calcs = 0;
         std::uint64_t sum_results = 0;
-        std::uint64_t dt; //nanoseconds
+        std::uint64_t dt = 0; //nanoseconds
         test_result() = default;
     };
 
@@ -165,7 +165,7 @@ public:
 class test_fmod_extreme : public test_fmod_base {
     uint64_t num_vals;
 public:
-    test_fmod_extreme(uint64_t _num_vals) : num_vals(_num_vals) {};
+    explicit test_fmod_extreme(uint64_t _num_vals) : num_vals(_num_vals) {};
     template<typename F>
     test_result do_test(F f) {
         test_result result;
