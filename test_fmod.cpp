@@ -11,7 +11,10 @@
 #include <random>
 #include <fstream>
 
-double my_fmod (double x, double y);
+extern "C" {
+  double my_fmod (double x, double y);
+  double __ieee754_fmod32 (double x, double y);
+};
 
 using namespace std;
 
@@ -188,10 +191,13 @@ public:
         return result;
     }
 };
-//fstream fs("chekv.dat", fstream::out);
+// fstream fs("chekv.dat", fstream::out);
 
 inline
 double dummy_f(double x, double y) {
+    /* if( abs(x) < abs(y) )
+      swap(x, y);
+    fs << setprecision(18) << x << " " << y << endl; */
     return x + y;
 }
 
@@ -211,6 +217,36 @@ double fmod_libm(double x, double y) {
 }
 
 inline
+double fmod_libm32(double x, double y) {
+  return __ieee754_fmod32(x, y);
+}
+
+#if BOOST_ARCH_X86
+inline
+double fmod_fpu(double x, double y) {
+  double res;
+  asm ("1:\tfprem\n"
+       "fstsw   %%ax\n"
+       "sahf\n"
+       "jp      1b\n"
+       "fstp    %%st(1)"
+  : "=t" (res) : "0" (x), "u" (y) : "ax", "st(1)");
+  return res;
+}
+#endif
+
+inline
+double my_fmod_wrap(double x, double y)
+{
+  mynumber xa, ya, ni, nn;
+  xa.x = x;
+  ya.x = y;
+  cout << hex << xa.i << " " << ya.i << dec << endl;
+  nn.x = my_fmod(x, y);
+  return nn.x;
+}
+
+inline
 double fmod_check(double x, double y) {
     /*if( !isfinite(x) || !isfinite(y) )
       return 0.0;
@@ -226,6 +262,28 @@ double fmod_check(double x, double y) {
     return ni.x;
 }
 
+template <class C>
+uint64_t do_calc_set(C tm, string header) {
+  cout << header << endl;
+  auto r = tm.do_test(dummy_f);
+  cout << "  Dummy function   :" << endl << test_fmod_base::report(r, 4) << endl;
+  uint64_t result = r.total_calcs;
+
+  r = tm.do_test(fmod_libm);
+  cout << "  Internal function :" << endl << test_fmod_base::report(r, 4) << endl;
+
+  r = tm.do_test(my_fmod);
+  cout << "  New function      :" << endl << test_fmod_base::report(r, 4) << endl;
+#if BOOST_ARCH_X86
+  r = tm.do_test(fmod_fpu);
+  cout << "  FPU function      :" << endl << test_fmod_base::report(r, 4) << endl;
+#endif
+  r = tm.do_test(fmod_libm32);
+  cout << "  ieee754 32 bit    :" << endl << test_fmod_base::report(r, 4) << endl;
+
+  return result;
+}
+
 int main() {
     {
         std::size_t control_hash = boost::hash_value(200);
@@ -238,60 +296,22 @@ int main() {
     {
         test_fmod_main tm;
         tm.set_vals(25); // Reduce factor default 25
-
-        cout << "Main test: " << endl;
-
-        auto r = tm.do_test(dummy_f);
-        cout << "  Dummy function   :" << endl << test_fmod_base::report(r, 4) << endl;
-        num_vals = r.total_calcs;
-
-        r = tm.do_test(fmod_libm);
-        cout << "  Internal function:" << endl << test_fmod_base::report(r, 4) << endl;
-
-        r = tm.do_test(my_fmod);
-        cout << "  New function     :" << endl << test_fmod_base::report(r, 4) << endl;
+        num_vals = do_calc_set(tm, "Main test:");
     }
 
     {
         test_fmod_wrap t_pi(-4 * M_PI, 4 * M_PI, 10 * num_vals, 2 * M_PI);
-
-        cout << "Test wrap 2 * pi: " << endl;
-        auto r = t_pi.do_test(dummy_f);
-        cout << "  Dummy function   :" << endl << test_fmod_base::report(r, 4) << endl;
-
-        r = t_pi.do_test(fmod_libm);
-        cout << "  Internal function:" << endl << test_fmod_base::report(r, 4) << endl;
-
-        r = t_pi.do_test(my_fmod);
-        cout << "  New function     :" << endl << test_fmod_base::report(r, 4) << endl;
+        do_calc_set(t_pi, "Test wrap 2 * pi:");
     }
 
     {
         test_fmod_wrap t_factor(-1E6, 1E6, 10 * num_vals, 1.0);
-
-        cout << "Fraction part: " << endl;
-        auto r = t_factor.do_test(dummy_f);
-        cout << "  Dummy function   :" << endl << test_fmod_base::report(r, 4) << endl;
-
-        r = t_factor.do_test(fmod_libm);
-        cout << "  Internal function:" << endl << test_fmod_base::report(r, 4) << endl;
-
-        r = t_factor.do_test(my_fmod);
-        cout << "  New function     :" << endl << test_fmod_base::report(r, 4) << endl;
+        do_calc_set(t_factor, "Fraction part:");
     }
 
     {
         test_fmod_extreme t_extr(num_vals);
-
-        cout << "fmod from huge and tiny values: " << endl;
-        auto r = t_extr.do_test(dummy_f);
-        cout << "  Dummy function   :" << endl << test_fmod_base::report(r, 4) << endl;
-
-        r = t_extr.do_test(fmod_libm);
-        cout << "  Internal function:" << endl << test_fmod_base::report(r, 4) << endl;
-
-        r = t_extr.do_test(my_fmod);
-        cout << "  New function     :" << endl << test_fmod_base::report(r, 4) << endl;
+        do_calc_set(t_extr, "fmod from huge and tiny values:");
     }
 
     return 0;

@@ -8,5 +8,7 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -marc
 
 find_package(Boost REQUIRED COMPONENTS timer)
 
-add_executable(test_fmod test_fmod.cpp e_fmod.cpp)
+include_directories(fake_incl)
+
+add_executable(test_fmod test_fmod.cpp libm-file/e_fmod.c libm-file/e_fmod32_orig.c)
 target_link_libraries(test_fmod Boost::timer)
