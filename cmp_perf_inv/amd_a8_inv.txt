@@ -1,0 +1,205 @@
+Test hash: 0x64061da93a405636
+Equal to : 0x64061da93a405636
+Main test:
+  Dummy function   :
+    C++ HASH input values      : 0x21158C961C898611
+    C++ HASH output values     : 0x6D770D8942BE1EB9
+    Total calculations         : 529984
+    Time                       : 14.254 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0x21158C961C898611
+    C++ HASH output values     : 0x8C21E0BE0555EAD6
+    Total calculations         : 529984
+    Time                       : 1293.683 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0x21158C961C898611
+    C++ HASH output values     : 0x8C21E0BE0555EAD6
+    Total calculations         : 529984
+    Time                       : 194.463 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0x21158C961C898611
+    C++ HASH output values     : 0x8C21E0BE0555EAD6
+    Total calculations         : 529984
+    Time                       : 135.476 (s for billion calls)
+
+Test wrap 2 * pi:
+  Dummy function   :
+    C++ HASH input values      : 0xDEA5014F821D5A4E
+    C++ HASH output values     : 0xC2E12694A0C8B923
+    Total calculations         : 5299840
+    Time                       : 9.003 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xDEA5014F821D5A4E
+    C++ HASH output values     : 0xFB5CDF41C75D42AE
+    Total calculations         : 5299840
+    Time                       : 21.812 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xDEA5014F821D5A4E
+    C++ HASH output values     : 0xFB5CDF41C75D42AE
+    Total calculations         : 5299840
+    Time                       : 20.809 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0xDEA5014F821D5A4E
+    C++ HASH output values     : 0xFB5CDF41C75D42AE
+    Total calculations         : 5299840
+    Time                       : 14.190 (s for billion calls)
+
+Fraction part:
+  Dummy function   :
+    C++ HASH input values      : 0x9F3CE1D4DD9F56C5
+    C++ HASH output values     : 0xCDD1EEEEE9C3D5C8
+    Total calculations         : 5299840
+    Time                       : 9.088 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0x9F3CE1D4DD9F56C5
+    C++ HASH output values     : 0x47CF3F84929CA40A
+    Total calculations         : 5299840
+    Time                       : 69.901 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0x9F3CE1D4DD9F56C5
+    C++ HASH output values     : 0x47CF3F84929CA40A
+    Total calculations         : 5299840
+    Time                       : 29.297 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0x9F3CE1D4DD9F56C5
+    C++ HASH output values     : 0x47CF3F84929CA40A
+    Total calculations         : 5299840
+    Time                       : 15.136 (s for billion calls)
+
+fmod from huge and tiny values:
+  Dummy function   :
+    C++ HASH input values      : 0xE568A4E5AF762EE9
+    C++ HASH output values     : 0x5CA903075E528827
+    Total calculations         : 529984
+    Time                       : 130.212 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xE568A4E5AF762EE9
+    C++ HASH output values     : 0xF451DBEFF2265EE6
+    Total calculations         : 529984
+    Time                       : 8241.074 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xE568A4E5AF762EE9
+    C++ HASH output values     : 0xF451DBEFF2265EE6
+    Total calculations         : 529984
+    Time                       : 319.015 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0xE568A4E5AF762EE9
+    C++ HASH output values     : 0xF451DBEFF2265EE6
+    Total calculations         : 529984
+    Time                       : 803.363 (s for billion calls)
+
+fmod(5.000000, 3.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xAA14F31297D06B29
+    C++ HASH output values     : 0xC554F4DA9AB8E9B9
+    Total calculations         : 529984
+    Time                       : 2.235 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xAA14F31297D06B29
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 15.537 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xAA14F31297D06B29
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 16.526 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0xAA14F31297D06B29
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 2.310 (s for billion calls)
+
+fmod(3.500000, 3.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xEAD39C862585E9B9
+    C++ HASH output values     : 0xE399A5CD67A6E7B9
+    Total calculations         : 529984
+    Time                       : 2.243 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xEAD39C862585E9B9
+    C++ HASH output values     : 0x231C2C767021C9B9
+    Total calculations         : 529984
+    Time                       : 16.305 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xEAD39C862585E9B9
+    C++ HASH output values     : 0x231C2C767021C9B9
+    Total calculations         : 529984
+    Time                       : 14.861 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0xEAD39C862585E9B9
+    C++ HASH output values     : 0x231C2C767021C9B9
+    Total calculations         : 529984
+    Time                       : 2.321 (s for billion calls)
+
+fmod(5497558138880.000000, 3.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xB63C9041949FB629
+    C++ HASH output values     : 0x42058AE503C69B39
+    Total calculations         : 529984
+    Time                       : 2.227 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xB63C9041949FB629
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 62.215 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xB63C9041949FB629
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 23.926 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0xB63C9041949FB629
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 2.348 (s for billion calls)
+
+fmod(179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000, 0.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xC40B646C518896B8
+    C++ HASH output values     : 0xF7CD3C2DB2C8FC39
+    Total calculations         : 529984
+    Time                       : 2.288 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xC40B646C518896B8
+    C++ HASH output values     : 0xBFD9CC0CA26183B9
+    Total calculations         : 529984
+    Time                       : 7110.873 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xC40B646C518896B8
+    C++ HASH output values     : 0xBFD9CC0CA26183B9
+    Total calculations         : 529984
+    Time                       : 1135.880 (s for billion calls)
+
+  FPU function      :
+    C++ HASH input values      : 0xC40B646C518896B8
+    C++ HASH output values     : 0xBFD9CC0CA26183B9
+    Total calculations         : 529984
+    Time                       : 2.328 (s for billion calls)
+
+
+Process finished with exit code 0
+

@@ -68,6 +68,50 @@
 #define CLZ(a) __builtin_clzll(a)
 #define CTZ(a) __builtin_ctzll(a)
 
+#define INV_HY
+
+#ifndef INV_HY
+inline static
+uint64_t division_loop (int32_t n, int32_t hyltzeroes, uint64_t hx, uint64_t hy)
+{
+  while (n > hyltzeroes)
+    {
+      n -= hyltzeroes;
+      hx <<= hyltzeroes;
+      hx %= hy;
+    }
+  hx <<= n;
+  hx %= hy;
+  return hx;
+}
+#else
+inline static
+uint64_t division_loop (int32_t n, int32_t hyltzeroes, uint64_t hx, uint64_t hy)
+{
+  if(n > hyltzeroes ) {
+      uint64_t inv_hy = (UINT64_MAX / hy);
+      while (n > hyltzeroes)
+        {
+          n -= hyltzeroes;
+          uint64_t hd  = (hx * inv_hy) >> (64 - hyltzeroes);
+          hx <<= hyltzeroes;
+          hx -= hd * hy;
+          while( hx > hy )
+            hx -= hy;
+        }
+      uint64_t hd = (hx * inv_hy) >> (64 - n);
+      hx <<= n;
+      hx -= hd * hy;
+      while( hx > hy )
+        hx -= hy;
+    } else {
+      hx <<= n;
+      hx %= hy;
+    }
+  return hx;
+}
+#endif
+
 /* Convert back to double */
 inline static
 double make_double (ieee_double_shape_type sx, uint64_t num, int32_t ep)
@@ -128,7 +172,6 @@ __ieee754_fmod (double x, double y)
       /* iy - 1 because of "zero power" for number with power 1 */
       return make_double (sx, d, iy - 1);
     }
-
   /* Both subnormal special case. */
   if (__glibc_unlikely (ix == 0 && iy == 0))
     {
@@ -189,16 +232,7 @@ __ieee754_fmod (double x, double y)
     return make_double (sx, hx, iy);
 
   /* hx next can't be 0, because hx < hy, hy % 2 == 1 hx * 2^i % hy != 0 */
-  while (n > hyltzeroes)
-    {
-      n -= hyltzeroes;
-      hx <<= hyltzeroes;
-      hx %= hy;
-    }
-
-  hx <<= n;
-  hx %= hy;
-
+  hx = division_loop (n, hyltzeroes, hx, hy);
   return make_double (sx, hx, iy);
 }
 libm_alias_finite (__ieee754_fmod, __fmod)

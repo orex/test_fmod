@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cmath>
 #include <array>
+#include <cfloat>
 #include <bitset>
 #include <vector>
 #include <boost/functional/hash.hpp>
@@ -191,6 +192,35 @@ public:
         return result;
     }
 };
+
+class test_fmod_fixed : public test_fmod_base {
+  uint64_t num_vals;
+  mynumber n1, n2;
+ public:
+  explicit test_fmod_fixed(uint64_t _num_vals, double x, double y)
+  : num_vals(_num_vals) {
+    n1.x = x;
+    n2.x = y;
+  };
+  template<typename F>
+  test_result do_test(F f) {
+    test_result result;
+    boost::timer::cpu_timer at;
+    at.start();
+    mynumber r;
+    boost::hash_combine(result.hash_input, boost::hash_value(n1.i));
+    boost::hash_combine(result.hash_input, boost::hash_value(n2.i));
+    for (uint64_t i = 0; i < num_vals; i++) {
+        r.x = f(n1.x, n2.x);
+        result.sum_results += r.i;
+        boost::hash_combine(result.hash_output, boost::hash_value(r.i));
+        result.total_calcs++;
+    }
+    at.stop();
+    result.dt = at.elapsed().wall;
+    return result;
+  }
+};
 // fstream fs("chekv.dat", fstream::out);
 
 inline
@@ -258,7 +288,10 @@ double fmod_check(double x, double y) {
     ni.x = fmod(x, y);
     nn.x = my_fmod(x, y);
     if( nn.i != ni.i )
-      cout << hex << ni.x << " " << nn.x << dec << endl;
+      {
+        cout << hex << xa.i << " " << ya.i << dec << endl;
+        cout << ni.x << " " << nn.x << endl;
+      }
     return ni.x;
 }
 
@@ -278,8 +311,8 @@ uint64_t do_calc_set(C tm, string header) {
   r = tm.do_test(fmod_fpu);
   cout << "  FPU function      :" << endl << test_fmod_base::report(r, 4) << endl;
 #endif
-  r = tm.do_test(fmod_libm32);
-  cout << "  ieee754 32 bit    :" << endl << test_fmod_base::report(r, 4) << endl;
+  //r = tm.do_test(fmod_libm32);
+  //cout << "  ieee754 32 bit    :" << endl << test_fmod_base::report(r, 4) << endl;
 
   return result;
 }
@@ -292,10 +325,17 @@ int main() {
                     << "Equal to : 0x64061da93a405636" << dec << endl;
     }
 
+  /*{
+    mynumber n1, n2;
+    n1.i = UINT64_C(0x43ac001000000001);
+    n2.i = UINT64_C(0x3360000000040001);
+    cout << fmod_check(n1.x, n2.x) << endl;
+  }*/
+
     uint64_t num_vals = 6864400;
     {
         test_fmod_main tm;
-        tm.set_vals(25); // Reduce factor default 25
+        tm.set_vals(45); // Reduce factor default 25
         num_vals = do_calc_set(tm, "Main test:");
     }
 
@@ -312,6 +352,15 @@ int main() {
     {
         test_fmod_extreme t_extr(num_vals);
         do_calc_set(t_extr, "fmod from huge and tiny values:");
+    }
+
+    for(const auto &p : {std::make_pair(5.0, 3.0),
+                         std::make_pair(3.5, 3.0),
+                         std::make_pair(5497558138880.0, 3.0), // 5 * 2^40
+                         std::make_pair(DBL_MAX, DBL_MIN * 1.3)}) {
+        test_fmod_fixed t_fixed(num_vals, p.first, p.second);
+        do_calc_set(t_fixed, "fmod(" + std::to_string(p.first) +", "
+                                     + std::to_string(p.second) + "):" );
     }
 
     return 0;

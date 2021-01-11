@@ -1,0 +1,157 @@
+Test hash: 0x64061da93a405636
+Equal to : 0x64061da93a405636
+Main test:
+  Dummy function   :
+    C++ HASH input values      : 0x21158C961C898611
+    C++ HASH output values     : 0x6D770D8942BE1EB9
+    Total calculations         : 529984
+    Time                       : 13.524 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0x21158C961C898611
+    C++ HASH output values     : 0x8C21E0BE0555EAD6
+    Total calculations         : 529984
+    Time                       : 1891.754 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0x21158C961C898611
+    C++ HASH output values     : 0x8C21E0BE0555EAD6
+    Total calculations         : 529984
+    Time                       : 219.857 (s for billion calls)
+
+Test wrap 2 * pi:
+  Dummy function   :
+    C++ HASH input values      : 0xDEA5014F821D5A4E
+    C++ HASH output values     : 0xC2E12694A0C8B923
+    Total calculations         : 5299840
+    Time                       : 18.793 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xDEA5014F821D5A4E
+    C++ HASH output values     : 0xFB5CDF41C75D42AE
+    Total calculations         : 5299840
+    Time                       : 32.681 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xDEA5014F821D5A4E
+    C++ HASH output values     : 0xFB5CDF41C75D42AE
+    Total calculations         : 5299840
+    Time                       : 27.208 (s for billion calls)
+
+Fraction part:
+  Dummy function   :
+    C++ HASH input values      : 0x9F3CE1D4DD9F56C5
+    C++ HASH output values     : 0xCDD1EEEEE9C3D5C8
+    Total calculations         : 5299840
+    Time                       : 18.762 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0x9F3CE1D4DD9F56C5
+    C++ HASH output values     : 0x47CF3F84929CA40A
+    Total calculations         : 5299840
+    Time                       : 97.883 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0x9F3CE1D4DD9F56C5
+    C++ HASH output values     : 0x47CF3F84929CA40A
+    Total calculations         : 5299840
+    Time                       : 31.954 (s for billion calls)
+
+fmod from huge and tiny values:
+  Dummy function   :
+    C++ HASH input values      : 0xE568A4E5AF762EE9
+    C++ HASH output values     : 0x5CA903075E528827
+    Total calculations         : 529984
+    Time                       : 12.036 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xE568A4E5AF762EE9
+    C++ HASH output values     : 0xF451DBEFF2265EE6
+    Total calculations         : 529984
+    Time                       : 12501.751 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xE568A4E5AF762EE9
+    C++ HASH output values     : 0xF451DBEFF2265EE6
+    Total calculations         : 529984
+    Time                       : 564.187 (s for billion calls)
+
+fmod(5.000000, 3.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xAA14F31297D06B29
+    C++ HASH output values     : 0xC554F4DA9AB8E9B9
+    Total calculations         : 529984
+    Time                       : 3.436 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xAA14F31297D06B29
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 22.924 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xAA14F31297D06B29
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 18.698 (s for billion calls)
+
+fmod(3.500000, 3.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xEAD39C862585E9B9
+    C++ HASH output values     : 0xE399A5CD67A6E7B9
+    Total calculations         : 529984
+    Time                       : 3.451 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xEAD39C862585E9B9
+    C++ HASH output values     : 0x231C2C767021C9B9
+    Total calculations         : 529984
+    Time                       : 37.238 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xEAD39C862585E9B9
+    C++ HASH output values     : 0x231C2C767021C9B9
+    Total calculations         : 529984
+    Time                       : 15.493 (s for billion calls)
+
+fmod(5497558138880.000000, 3.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xB63C9041949FB629
+    C++ HASH output values     : 0x42058AE503C69B39
+    Total calculations         : 529984
+    Time                       : 3.435 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xB63C9041949FB629
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 166.194 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xB63C9041949FB629
+    C++ HASH output values     : 0xDB8E2BC6333609B9
+    Total calculations         : 529984
+    Time                       : 21.783 (s for billion calls)
+
+fmod(179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000, 0.000000):
+  Dummy function   :
+    C++ HASH input values      : 0xC40B646C518896B8
+    C++ HASH output values     : 0xF7CD3C2DB2C8FC39
+    Total calculations         : 529984
+    Time                       : 3.436 (s for billion calls)
+
+  Internal function :
+    C++ HASH input values      : 0xC40B646C518896B8
+    C++ HASH output values     : 0xBFD9CC0CA26183B9
+    Total calculations         : 529984
+    Time                       : 10011.877 (s for billion calls)
+
+  New function      :
+    C++ HASH input values      : 0xC40B646C518896B8
+    C++ HASH output values     : 0xBFD9CC0CA26183B9
+    Total calculations         : 529984
+    Time                       : 1380.847 (s for billion calls)
+
+
+Process finished with exit code 0
+
